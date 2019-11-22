@@ -4,6 +4,7 @@ import './emojis.component';
 import './friends-list.component';
 import './inbox-rooms-list.component';
 import './main-box.component';
+import './notification.component';
 import './online-users-list.component';
 import './profile-box.component';
 import './public-rooms-list.component';
