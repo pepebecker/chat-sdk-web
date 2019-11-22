@@ -2,52 +2,61 @@ import * as angular from 'angular';
 
 import { ShowCreateChatBox } from '../keys/defines';
 import { RoomType } from '../keys/room-type';
+import { IConfig } from '../services/config';
 import { IRoomCreator } from '../services/room-creator';
 import { IRoomOpenQueue } from '../services/room-open-queue';
 import { Log } from '../services/log';
-import { IStringAnyObject } from '../interfaces/string-any-object';
 
-export interface ICreateRoomScope extends ng.IScope {
-  focusName: boolean;
-  public: boolean;
-  room: IStringAnyObject;
-  showMainBox(): void;
+export interface ICreateRoomOptions {
+  invitesEnabled: boolean;
+  name: string;
+  description: string;
 }
 
 class CreateRoomController {
 
-  static $inject = ['$scope', 'RoomCreator', 'RoomOpenQueue'];
+  static $inject = ['$scope', 'Config', 'RoomCreator', 'RoomOpenQueue'];
+
+  config: IConfig;
+  focusName: boolean;
+  public: boolean;
+  roomOptions: ICreateRoomOptions;
+
+  // Bindings
+  showMainBox: () => void;
 
   constructor(
-    private $scope: ICreateRoomScope,
+    private $scope: ng.IScope,
+    private Config: IConfig,
     private RoomCreator: IRoomCreator,
     private RoomOpenQueue: IRoomOpenQueue,
   ) {
+    this.config = this.Config;
+
     this.clearForm();
 
-    $scope.$on(ShowCreateChatBox, () => {
+    this.$scope.$on(ShowCreateChatBox, () => {
       Log.notification(ShowCreateChatBox, 'CreateRoomController');
-      $scope.focusName = true;
+      this.focusName = true;
     });
   }
 
   async createRoom() {
-
     try {
       const room = await (() => {
         // Is this a public room?
-        if (this.$scope.public) {
+        if (this.public) {
           return this.RoomCreator.createAndPushPublicRoom(
-            this.$scope.room.name,
-            this.$scope.room.description
+            this.roomOptions.name,
+            this.roomOptions.description
           );
         }
         else {
           return this.RoomCreator.createAndPushRoom(
             null,
-            this.$scope.room.name,
-            this.$scope.room.description,
-            this.$scope.room.invitesEnabled,
+            this.roomOptions.name,
+            this.roomOptions.description,
+            this.roomOptions.invitesEnabled,
             RoomType.OneToOne,
             true,
           );
@@ -68,11 +77,11 @@ class CreateRoomController {
 
   back() {
     this.clearForm();
-    this.$scope.showMainBox();
+    this.showMainBox();
   }
 
   clearForm() {
-    this.$scope.room = {
+    this.roomOptions = {
       invitesEnabled: false,
       name: null,
       description: null
@@ -81,4 +90,11 @@ class CreateRoomController {
 
 }
 
-angular.module('myApp.controllers').controller('CreateRoomController', CreateRoomController);
+angular.module('myApp.components').component('createRoomBox', {
+  templateUrl: '/assets/partials/create-room-box.html',
+  controller: CreateRoomController,
+  controllerAs: 'ctrl',
+  bindings: {
+    showMainBox: '<'
+  }
+});

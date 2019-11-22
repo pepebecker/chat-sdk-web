@@ -1,7 +1,6 @@
 import './chat-bar';
 import './chat-embed';
 import './chat';
-import './create-room';
 import './draggable-user';
 import './error-box';
 import './login';

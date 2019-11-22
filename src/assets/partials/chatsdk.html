@@ -42,7 +42,7 @@
                           show-profile-settings-box="showProfileSettingsBox">
                 </main-box>
 
-                <div data-ng-include data-ng-show="activeBox == 'createRoomBox' && !mainBoxMinimized" src=" partialsURL + 'create-room-box.html'"></div>
+                <create-room-box data-ng-show="activeBox == 'createRoomBox' && !mainBoxMinimized" show-main-box="showMainBox"></create-room-box>
 
                 <div data-ng-include data-ng-show="activeBox == 'errorBox' && !mainBoxMinimized" src=" partialsURL + 'error-box.html'"></div>
 
