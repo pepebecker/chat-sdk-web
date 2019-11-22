@@ -1,4 +1,5 @@
 import './chat-settings.component';
+import './emojis.component';
 import './friends-list.component';
 import './inbox-rooms-list.component';
 import './main-box.component';
