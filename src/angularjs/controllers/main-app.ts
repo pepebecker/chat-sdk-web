@@ -214,6 +214,30 @@ class MainAppController implements IMainAppController {
         $scope.$digest();
       });
     });
+
+    // Show boxes
+
+    $rootScope.$on(Defines.ShowLoginBox, (_, mode: LoginMode) => {
+      this.showLoginBox(mode);
+    });
+
+    $rootScope.$on(Defines.ShowMainBox, () => {
+      this.showMainBox();
+    });
+
+    $rootScope.$on(Defines.ShowProfileSettingsBox, () => {
+      this.showProfileSettingsBox();
+    });
+
+    // Show & hide notifications
+
+    $rootScope.$on(Defines.ShowNotification, (_, type: NotificationType, title: string, message: string, button: string) => {
+      this.showNotification(type, title, message, button);
+    });
+
+    $rootScope.$on(Defines.HideNotification, () => {
+      this.hideNotification();
+    });
   }
 
   /**
@@ -301,7 +325,7 @@ class MainAppController implements IMainAppController {
    * Show the login box
    */
   showLoginBox(mode?: LoginMode) {
-    this.$rootScope.loginMode = mode ? mode : this.Auth.mode;
+    // this.$rootScope.loginMode = mode ? mode : this.Auth.mode;
     this.$scope.activeBox = Defines.LoginBox;
     this.$timeout.bind(this)(() => {
       this.$scope.$digest();

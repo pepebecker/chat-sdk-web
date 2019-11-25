@@ -22,5 +22,15 @@ export const MainBox = 'mainBox';
 export const CreateRoomBox = 'createRoomBox';
 export const ErrorBox = 'errorBox';
 
-export const ShowProfileSettingsBox = 'showProfileSettingsBox';
+// Login Mode
+export const SetLoginMode = 'setLoginMode';
+
+// Show boxes
+export const ShowMainBox = 'showMainBox';
+export const ShowLoginBox = 'showLoginBox';
 export const ShowCreateChatBox = 'showCreateChatBox';
+export const ShowProfileSettingsBox = 'showProfileSettingsBox';
+
+// Show & hide notification
+export const ShowNotification = 'showNotification';
+export const HideNotification = 'hideNotification';

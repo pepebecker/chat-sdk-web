@@ -1,61 +1,44 @@
 import * as angular from 'angular';
 import * as firebase from 'firebase';
 
+import * as Defines from '../keys/defines';
 import { N } from '../keys/notification-keys';
 import { Utils } from '../services/utils';
 import { LoginMode } from '../keys/login-mode-keys';
 import { NotificationType } from '../keys/notification-type';
 import { IRootScope } from '../interfaces/root-scope';
 import { IFriendsConnector } from '../connectors/friend-connector';
-import { ICache } from '../persistence/cache';
 import { IPresence } from '../network/presence';
-import { ISingleSignOn } from '../network/single-sign-on';
-import { IOnlineConnector } from '../connectors/online-connector';
-import { IPaths } from '../network/paths';
 import { ILocalStorage } from '../persistence/local-storage';
-import { IStateManager } from '../services/state-manager';
-import { IRoomPositionManager } from '../services/room-position-manager';
 import { IConfig } from '../services/config';
 import { IAuth } from '../network/auth';
 import { ICredential } from '../network/credential';
 import { IAutoLogin } from '../network/auto-login';
+import { INotification } from './notification.component';
+import { IEnvironment } from '../services/environment';
 
-export interface ILoginScope extends ng.IScope {
+class LoginController {
+
+  static $inject = ['$rootScope', 'FriendsConnector', 'Presence', 'LocalStorage', 'Config', 'Auth', 'Credential', 'AutoLogin', 'Environment'];
+
+  config = this.Config;
+  loginMode: string;
   email: string;
-  errorMessage: string;
   password: string;
-  rememberMe: boolean;
+  passwordFocus: any;
   showError: boolean;
-  authenticate(credential: ICredential): void;
-  forgotPassword(email: string): void;
-  getLoginMode(): LoginMode;
-  handleAuthData(authData): void;
-  handleLoginComplete(userData, firstLogin: boolean): void;
-  handleLoginError(error: any): void;
-  hideNotification(): void;
-  login(credential: ICredential): void;
-  loginWithAnonymous(): void;
-  loginWithFacebook(): void;
-  loginWithGithub(): void;
-  loginWithGoogle(): void;
-  loginWithPassword(): void;
-  loginWithTwitter(): void;
-  setError(message: string): void;
-  showLoginBox(mode?: string): void;
-  showMainBox(): void;
-  showNotification(type: NotificationType, title: string, message?: string, button?: string): void;
-  showProfileSettingsBox(): void;
-  signUp(email: string, password: string): void;
-  startChatting(): void;
-}
+  errorMessage: string;
+  rememberMe: boolean;
+  loginURL: string;
+  registerURL: string;
+  websiteName: string;
 
-export interface ILoginController {
+  // Bindings
+  notification: INotification;
 
-}
-
-class LoginController implements LoginController {
-
-  static $inject = ['$rootScope', '$scope', '$timeout', 'FriendsConnector', 'Cache', 'Presence', 'SingleSignOn', 'OnlineConnector', 'Paths', 'LocalStorage', 'StateManager', 'RoomPositionManager', 'Config', 'Auth', 'Credential', 'AutoLogin'];
+  // Images
+  img_loader: string;
+  img_30_start_chatting: string;
 
   /**
    * Initialize the login controller
@@ -64,53 +47,31 @@ class LoginController implements LoginController {
    */
   constructor(
     private $rootScope: IRootScope,
-    private $scope: ILoginScope,
-    private $timeout: ng.ITimeoutService,
     private FriendsConnector: IFriendsConnector,
-    private Cache: ICache,
     private Presence: IPresence,
-    private SingleSignOn: ISingleSignOn,
-    private OnlineConnector: IOnlineConnector,
-    private Paths: IPaths,
     private LocalStorage: ILocalStorage,
-    private StateManager: IStateManager,
-    private RoomPositionManager: IRoomPositionManager,
     private Config: IConfig,
     private Auth: IAuth,
     private Credential: ICredential,
     private AutoLogin: IAutoLogin,
+    private Environment: IEnvironment,
   ) {
-    // $scope properties
-    $scope.rememberMe = true;
+    this.img_loader = this.Environment.imagesURL() + 'loader.gif';
+    this.img_30_start_chatting = this.Environment.imagesURL() + 'cc-30-start-chatting.png';
 
-    // $scope methods
-    $scope.authenticate = this.authenticate.bind(this);
-    $scope.forgotPassword = this.forgotPassword.bind(this);
-    $scope.getLoginMode = this.getLoginMode.bind(this);
-    $scope.handleAuthData = this.handleAuthData.bind(this);
-    $scope.handleLoginComplete = this.handleLoginComplete.bind(this);
-    $scope.handleLoginError = this.handleLoginError.bind(this);
-    $scope.login = this.login.bind(this);
-    $scope.loginWithAnonymous = this.loginWithAnonymous.bind(this);
-    $scope.loginWithFacebook = this.loginWithFacebook.bind(this);
-    $scope.loginWithGithub = this.loginWithGithub.bind(this);
-    $scope.loginWithGoogle = this.loginWithGoogle.bind(this);
-    $scope.loginWithPassword = this.loginWithPassword.bind(this);
-    $scope.loginWithTwitter = this.loginWithTwitter.bind(this);
-    $scope.setError = this.setError.bind(this);
-    $scope.signUp = this.signUp.bind(this);
-    $scope.startChatting = this.startChatting.bind(this);
+    this.$rootScope.$broadcast(Defines.ShowLoginBox, LoginMode.Authenticating);
 
-    $scope.showLoginBox(LoginMode.Authenticating);
-
-    if (AutoLogin.autoLoginEnabled()) {
-      const _ = firebase.auth().signOut();
+    if (this.AutoLogin.autoLoginEnabled()) {
     }
 
-    firebase.auth().onAuthStateChanged((authData) => {
+    firebase.auth().onAuthStateChanged(() => {
       if (!Auth.isAuthenticating()) {
         this.authenticate.bind(this)(null);
       }
+    });
+
+    $rootScope.$on(Defines.SetLoginMode, (_, mode: LoginMode) => {
+      this.loginMode = mode ? mode : this.Auth.mode;
     });
   }
 
@@ -120,7 +81,7 @@ class LoginController implements LoginController {
   }
 
   async authenticate(credential: ICredential) {
-    this.$scope.showLoginBox(LoginMode.Authenticating);
+    this.$rootScope.$broadcast(Defines.ShowLoginBox, LoginMode.Authenticating);
 
     try {
       const authUser = await this.Auth.authenticate(credential);
@@ -131,7 +92,7 @@ class LoginController implements LoginController {
         this.handleLoginError(error);
       }
       else {
-        this.$scope.showLoginBox(this.getLoginMode());
+        this.$rootScope.$broadcast(Defines.ShowLoginBox, this.getLoginMode());
       }
     }
   }
@@ -150,26 +111,26 @@ class LoginController implements LoginController {
   }
 
   handleAuthData(authData) {
-    this.$rootScope.loginMode = this.Auth.mode;
+    this.$rootScope.$broadcast(Defines.SetLoginMode, this.Auth.mode);
 
     console.log(authData);
 
     this.$rootScope.auth = authData;
     if (authData) {
-      this.handleLoginComplete(authData, false);
+      this.handleLoginComplete(false);
     }
     else {
-      this.$scope.showLoginBox();
+      this.$rootScope.$broadcast(Defines.ShowLoginBox);
     }
   }
 
   setError(message: string) {
-    this.$scope.showError = !Utils.unORNull(message);
-    this.$scope.errorMessage = message;
+    this.showError = !Utils.unORNull(message);
+    this.errorMessage = message;
   }
 
   loginWithPassword() {
-    this.login(this.Credential.emailAndPassword(this.$scope.email, this.$scope.password));
+    this.login(this.Credential.emailAndPassword(this.email, this.password));
   }
 
   loginWithFacebook() {
@@ -204,29 +165,25 @@ class LoginController implements LoginController {
     this.Presence.goOnline();
 
     // Reset any error messages
-    this.$scope.showError = false;
+    this.showError = false;
 
     // Hide the overlay
-    this.$scope.showNotification(NotificationType.Waiting, 'Logging in', 'For social login make sure to enable popups!');
+    this.$rootScope.$broadcast(Defines.ShowNotification, NotificationType.Waiting, 'Logging in', 'For social login make sure to enable popups!');
 
     try {
       const authData = await this.Auth.authenticate(credential);
       this.handleAuthData(authData);
     }
     catch (error) {
-      this.$scope.hideNotification();
+      this.$rootScope.$broadcast(Defines.HideNotification);
       this.handleLoginError(error);
-
-      this.$timeout(() => {
-        this.$scope.$digest();
-      });
     }
   }
 
   async forgotPassword(email: string) {
     try {
       await this.Auth.resetPasswordByEmail(email);
-      this.$scope.showNotification(NotificationType.Alert, 'Email sent', 'Instructions have been sent. Please check your Junk folder!', 'ok');
+      this.$rootScope.$broadcast(Defines.ShowNotification, NotificationType.Alert, 'Email sent', 'Instructions have been sent. Please check your Junk folder!', 'ok');
       this.setError(null);
     }
     catch (error) {
@@ -244,16 +201,16 @@ class LoginController implements LoginController {
     // Re-establish connection with Firebase
     this.Presence.goOnline();
 
-    this.$scope.showError = false;
+    this.showError = false;
 
-    this.$scope.showNotification(NotificationType.Waiting, 'Registering...');
+    this.$rootScope.$broadcast(Defines.ShowNotification, NotificationType.Waiting, 'Registering...');
 
     // First create the super
 
     try {
       await this.Auth.signUp(email, password);
-      this.$scope.email = email;
-      this.$scope.password = password;
+      this.email = email;
+      this.password = password;
       this.loginWithPassword();
     }
     catch (error) {
@@ -268,10 +225,10 @@ class LoginController implements LoginController {
    * @param userData - User object from Firebase authentication
    * @param firstLogin - Has the user just signed up?
    */
-  handleLoginComplete(userData, firstLogin: boolean) {
+  handleLoginComplete(firstLogin: boolean) {
 
     // Write a record to the firebase to record this API key
-    this.$scope.showNotification(NotificationType.Waiting, 'Opening Chat...');
+    this.$rootScope.$broadcast(Defines.ShowNotification, NotificationType.Waiting, 'Opening Chat...');
 
     // Load friends from config
     if (this.Config.friends) {
@@ -283,14 +240,14 @@ class LoginController implements LoginController {
 
     // We have the user's ID so we can get the user's object
     if (firstLogin) {
-      this.$scope.showProfileSettingsBox();
+      this.$rootScope.$broadcast(Defines.ShowProfileSettingsBox);
     }
     else {
-      this.$scope.showMainBox();
+      this.$rootScope.$broadcast(Defines.ShowMainBox);
     }
 
     this.$rootScope.$broadcast(N.LoginComplete);
-    this.$scope.hideNotification();
+    this.$rootScope.$broadcast(Defines.HideNotification);
 
   }
 
@@ -303,7 +260,7 @@ class LoginController implements LoginController {
   handleLoginError(error: any) {
 
     // The login failed - display a message to the user
-    this.$scope.hideNotification();
+    this.$rootScope.$broadcast(Defines.HideNotification);
 
     let message = error.message || 'An unknown error occurred';
 
@@ -338,4 +295,12 @@ class LoginController implements LoginController {
 
 }
 
-angular.module('myApp.controllers').controller('LoginController', LoginController);
+// angular.module('myApp.controllers').controller('LoginController', LoginController);
+angular.module('myApp.components').component('loginBox', {
+  templateUrl: '/assets/partials/login-box.html',
+  controller: LoginController,
+  controllerAs: 'ctrl',
+  bindings: {
+    notification: '<'
+  },
+});

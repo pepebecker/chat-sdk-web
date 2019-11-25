@@ -1,6 +1,6 @@
 import * as angular from 'angular';
 
-import { ShowProfileSettingsBox } from '../keys/defines';
+import { ShowProfileSettingsBox, ShowLoginBox, SetLoginMode } from '../keys/defines';
 import { UserKeys } from '../keys/user-keys';
 import { Utils } from '../services/utils';
 import { NotificationType } from '../keys/notification-type';
@@ -10,14 +10,16 @@ import { ISoundEffects } from '../services/sound-effects';
 import { ILocalStorage } from '../persistence/local-storage';
 import { IRootScope } from '../interfaces/root-scope';
 import { IUser } from '../entities/user';
+import { LoginMode } from '../keys/login-mode-keys';
 
 export interface IProfileSettingsScope extends ng.IScope {
+  cacheCleared: boolean;
   dirty: boolean;
+  loginMode: LoginMode;
   muted: boolean;
   nameChangeDummy: any;
   ref: any;
   validation: {};
-  cacheCleared: boolean;
   clearCache(): void;
   done(): void;
   getUser(): IUser;
@@ -88,6 +90,10 @@ class ProfileSettingsController implements IProfileSettingsController {
     // When the box will be opened we need to add a listener to the user
     $scope.$on(ShowProfileSettingsBox, () => {
       console.log('Show Profile');
+    });
+
+    this.$rootScope.$on(SetLoginMode, (_, mode) => {
+      this.$scope.loginMode = mode;
     });
   }
 

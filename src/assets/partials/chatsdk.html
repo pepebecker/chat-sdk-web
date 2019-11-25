@@ -32,7 +32,7 @@
 
             <div data-ng-show="on">
 
-                <div data-ng-include data-ng-show="activeBox == 'loginBox' && !mainBoxMinimized" src=" partialsURL + 'login-box.html'"></div>
+                <login-box data-ng-show="activeBox == 'loginBox' && !mainBoxMinimized" notification="notification"></login-box>
 
                 <div data-ng-include data-ng-show="activeBox == 'profileSettingsBox' && !mainBoxMinimized" src=" partialsURL + 'profile-settings-box.html'"></div>
 
