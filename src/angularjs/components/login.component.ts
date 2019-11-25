@@ -70,7 +70,7 @@ class LoginController {
       }
     });
 
-    $rootScope.$on(Defines.SetLoginMode, (_, mode: LoginMode) => {
+    this.$rootScope.$on(Defines.SetLoginMode, (_, mode: LoginMode) => {
       this.loginMode = mode ? mode : this.Auth.mode;
     });
   }

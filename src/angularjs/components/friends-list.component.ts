@@ -92,7 +92,4 @@ angular.module('myApp.components').component('friendsList', {
   templateUrl: '/assets/partials/user-list.html',
   controller: FriendsListController,
   controllerAs: 'ctrl',
-  bindings: {
-    room: '<'
-  },
 });

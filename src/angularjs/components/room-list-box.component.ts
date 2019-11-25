@@ -5,7 +5,6 @@ import { IRoom } from '../entities/room';
 import { Dimensions } from '../keys/dimensions';
 import { Log } from '../services/log';
 import { IRootScope } from '../interfaces/root-scope';
-import { IAuth } from '../network/auth';
 import { ICache } from '../persistence/cache';
 import { ILocalStorage } from '../persistence/local-storage';
 import { IRoomPositionManager } from '../services/room-position-manager';
@@ -13,7 +12,7 @@ import { IEnvironment } from '../services/environment';
 
 class RoomListBoxController {
 
-  static $inject = ['$rootScope', '$timeout', 'Auth', 'Cache', 'Environment', 'LocalStorage', 'RoomPositionManager'];
+  static $inject = ['$rootScope', '$timeout', 'Cache', 'Environment', 'LocalStorage', 'RoomPositionManager'];
 
   rooms = Array<IRoom>();
   boxHeight = Dimensions.RoomListBoxHeight;
@@ -28,7 +27,6 @@ class RoomListBoxController {
   constructor(
     private $rootScope: IRootScope,
     private $timeout: ng.ITimeoutService,
-    private Auth: IAuth,
     private Cache: ICache,
     private Environment: IEnvironment,
     private LocalStorage: ILocalStorage,
@@ -38,12 +36,12 @@ class RoomListBoxController {
     this.img_30_minimize = this.Environment.imagesURL() + 'cc-30-minimize.png';
 
     // Is the more box minimized?
-    this.setMoreBoxMinimized(LocalStorage.getProperty(LocalStorage.moreMinimizedKey));
+    this.setMoreBoxMinimized(this.LocalStorage.getProperty(this.LocalStorage.moreMinimizedKey));
 
     // Update the list when a room changes
-    $rootScope.$on(N.UpdateRoomActiveStatus, this.updateList.bind(this));
-    $rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
-    $rootScope.$on(N.Logout, this.updateList.bind(this));
+    this.$rootScope.$on(N.UpdateRoomActiveStatus, this.updateList.bind(this));
+    this.$rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
+    this.$rootScope.$on(N.Logout, this.updateList.bind(this));
   }
 
   updateList() {

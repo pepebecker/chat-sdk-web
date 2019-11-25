@@ -10,6 +10,7 @@ export interface INotification {
 
 class NotificationController {
 
+  // Bindings
   notification: INotification;
 
   submit() {

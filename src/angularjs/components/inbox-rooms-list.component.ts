@@ -20,28 +20,28 @@ class InboxRoomsListController {
     private RoomStore: IRoomStore,
     private Search: ISearch,
   ) {
-    $rootScope.$on(N.RoomAdded, () => {
+    this.$rootScope.$on(N.RoomAdded, () => {
       Log.notification(N.RoomAdded, 'InboxRoomsListController');
       this.updateList();
     });
 
-    $rootScope.$on(N.RoomRemoved, () => {
+    this.$rootScope.$on(N.RoomRemoved, () => {
       Log.notification(N.RoomRemoved, 'InboxRoomsListController');
       this.updateList();
     });
 
-    $rootScope.$on(N.LoginComplete, () => {
+    this.$rootScope.$on(N.LoginComplete, () => {
       Log.notification(N.LoginComplete, 'InboxRoomsListController');
       RoomStore.loadPrivateRoomsToMemory();
       this.updateList();
     });
 
     // Update the list if the user count on a room changes
-    $rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
+    this.$rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
 
-    $rootScope.$on(N.Logout, this.updateList.bind(this));
+    this.$rootScope.$on(N.Logout, this.updateList.bind(this));
 
-    Search.queryForTabObservable(InboxTab).subscribe(query => {
+    this.Search.queryForTabObservable(InboxTab).subscribe(query => {
       this.updateList();
     });
   }

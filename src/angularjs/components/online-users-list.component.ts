@@ -35,12 +35,12 @@ class OnlineUsersListController extends AbstractUsersListController {
   ) {
     super($rootScope, Cache, UserStore, RoomStore, RoomCreator, RoomOpenQueue, ProfileBox);
 
-    $rootScope.$on(N.OnlineUserAdded, () => {
+    this.$rootScope.$on(N.OnlineUserAdded, () => {
       Log.notification(N.OnlineUserAdded, 'OnlineUsersListController');
       this.updateList();
     });
 
-    $rootScope.$on(N.OnlineUserRemoved, () => {
+    this.$rootScope.$on(N.OnlineUserRemoved, () => {
       Log.notification(N.OnlineUserRemoved, 'OnlineUsersListController');
       this.updateList();
     });

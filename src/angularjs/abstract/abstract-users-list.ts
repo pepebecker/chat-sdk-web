@@ -30,25 +30,25 @@ export class AbstractUsersListController {
       throw new Error('AbstractUsersListController can\'t be instantiated.');
     }
 
-    $rootScope.$on(N.UserBlocked, () => {
+    this.$rootScope.$on(N.UserBlocked, () => {
       Log.notification(N.UserBlocked, 'AbstractUsersListController');
       this.updateList();
     });
 
-    $rootScope.$on(N.UserUnblocked, () => {
+    this.$rootScope.$on(N.UserUnblocked, () => {
       Log.notification(N.UserUnblocked, 'AbstractUsersListController');
       this.updateList();
     });
 
     // TODO: A bit hacky
-    $rootScope.$on(N.RoomUpdated, (event, room) => {
+    this.$rootScope.$on(N.RoomUpdated, (event, room) => {
       Log.notification(N.RoomUpdated, 'AbstractUsersListController');
       if (room === this.room) {
         this.updateList();
       }
     });
 
-    $rootScope.$on(N.Logout, this.updateList.bind(this));
+    this.$rootScope.$on(N.Logout, this.updateList.bind(this));
   }
 
   updateList() {

@@ -11,6 +11,7 @@ class ProfileBoxController {
 
   static $inject = ['ProfileBox', 'UserStore', 'Blocking', 'Contact', 'Thread'];
 
+  // Bindings
   dragging: boolean;
 
   constructor(

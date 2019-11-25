@@ -7,12 +7,14 @@ class EmojiController {
 
   static $inject = ['Emoji', '$scope'];
 
-  text: string;
   emoji: Emoji;
   emojis: string[];
 
+  // Bindings
+  text: string;
+
   constructor(public Emoji: Emoji) {
-    this.emoji = Emoji;
+    this.emoji = this.Emoji;
     this.emojis = this.emoji.getEmojis();
   }
 
