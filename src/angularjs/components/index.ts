@@ -1,6 +1,7 @@
 import './chat-settings.component';
 import './create-room.component';
 import './emojis.component';
+import './error-box.component';
 import './friends-list.component';
 import './inbox-rooms-list.component';
 import './main-box.component';

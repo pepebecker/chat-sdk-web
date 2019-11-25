@@ -44,7 +44,7 @@
 
                 <create-room-box data-ng-show="activeBox == 'createRoomBox' && !mainBoxMinimized" show-main-box="showMainBox"></create-room-box>
 
-                <div data-ng-include data-ng-show="activeBox == 'errorBox' && !mainBoxMinimized" src=" partialsURL + 'error-box.html'"></div>
+                <error-box data-ng-show="activeBox == 'errorBox' && !mainBoxMinimized" error-box-message="errorBoxMessage" notification="notification"></error-box>
 
                 <div data-ng-controller="ChatBarController as cbc" >
                     <div data-ng-repeat="(id, room) in cbc.rooms">
