@@ -21,6 +21,7 @@ export const LoginBox = 'loginBox';
 export const MainBox = 'mainBox';
 export const CreateRoomBox = 'createRoomBox';
 export const ErrorBox = 'errorBox';
+export const MinimizeMainBox = 'minimizeMainBox';
 
 // Login Mode
 export const SetLoginMode = 'setLoginMode';
@@ -28,7 +29,7 @@ export const SetLoginMode = 'setLoginMode';
 // Show boxes
 export const ShowMainBox = 'showMainBox';
 export const ShowLoginBox = 'showLoginBox';
-export const ShowCreateChatBox = 'showCreateChatBox';
+export const ShowCreateRoomBox = 'showCreateRoomBox';
 export const ShowProfileSettingsBox = 'showProfileSettingsBox';
 
 // Show & hide notification

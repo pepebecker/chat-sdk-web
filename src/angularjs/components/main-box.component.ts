@@ -1,9 +1,9 @@
 import * as angular from 'angular';
 
+import * as Defines from '../keys/defines';
 import { N } from '../keys/notification-keys';
 import { FriendsTab, InboxTab, RoomsTab, UsersTab } from '../keys/tab-keys';
 import { Dimensions } from '../keys/dimensions';
-import { ShowProfileSettingsBox } from '../keys/defines';
 import { ArrayUtils } from '../services/array-utils';
 import { Log } from '../services/log';
 import { IFriendsConnector } from '../connectors/friend-connector';
@@ -24,7 +24,7 @@ export interface IMainBoxScope extends ng.IScope {
 
 class MainBoxController {
 
-  static $inject = ['$scope', '$timeout', 'FriendsConnector', 'Config', 'Screen', 'RoomStore', 'UserStore', 'Search', 'TabService', 'Environment'];
+  static $inject = ['$rootScope', '$scope', '$timeout', 'FriendsConnector', 'Config', 'Screen', 'RoomStore', 'UserStore', 'Search', 'TabService', 'Environment'];
 
   mainBoxHeight = Dimensions.MainBoxHeight;
   mainBoxWidth = Dimensions.MainBoxWidth;
@@ -41,12 +41,8 @@ class MainBoxController {
   img_30_plus: string;
   img_30_gear: string;
 
-  // Bindings
-  minimizeMainBox: () => void;
-  showCreateRoomBox: () => void;
-  showProfileSettingsBox: () => void;
-
   constructor(
+    private $rootScope: ng.IRootScopeService,
     private $scope: IMainBoxScope,
     private $timeout: ng.ITimeoutService,
     private FriendsConnector: IFriendsConnector,
@@ -63,7 +59,7 @@ class MainBoxController {
     this.img_30_gear = this.Environment.imagesURL() + 'cc-30-gear.png';
 
     // Work out how many tabs there are
-    this.$scope.$on(N.ConfigUpdated, () => {
+    this.$rootScope.$on(N.ConfigUpdated, () => {
       this.updateConfig.bind(this)();
     });
     this.updateConfig();
@@ -81,25 +77,25 @@ class MainBoxController {
     this.$scope.canCloseRoom = false;
 
     // When the user value changes update the user interface
-    this.$scope.$on(N.UserValueChanged, () => {
+    this.$rootScope.$on(N.UserValueChanged, () => {
       Log.notification(N.UserValueChanged, 'MainBoxController');
       this.$timeout(() => {
-        this.$scope.$digest();
+        this.$rootScope.$digest();
       });
     });
 
     this.updateMainBoxSize();
-    this.$scope.$on(N.ScreenSizeChanged, () => {
+    this.$rootScope.$on(N.ScreenSizeChanged, () => {
       Log.notification(N.ScreenSizeChanged, 'MainBoxController');
       this.updateMainBoxSize.bind(this)();
     });
 
-    this.$scope.$on(N.RoomBadgeChanged, () => {
+    this.$rootScope.$on(N.RoomBadgeChanged, () => {
       Log.notification(N.RoomBadgeChanged, 'MainBoxController');
       this.updateInboxCount.bind(this)();
     });
 
-    this.$scope.$on(N.LoginComplete, () => {
+    this.$rootScope.$on(N.LoginComplete, () => {
       Log.notification(N.RoomRemoved, 'InboxRoomsListController');
       this.updateInboxCount.bind(this)();
     });
@@ -196,15 +192,22 @@ class MainBoxController {
     return this.UserStore.currentUser();
   }
 
+  minimizeMainBox() {
+    this.$rootScope.$broadcast(Defines.MinimizeMainBox);
+  }
+
+  showCreateRoomBox() {
+    this.$rootScope.$broadcast(Defines.ShowCreateRoomBox);
+  }
+
+  showProfileSettingsBox() {
+    this.$rootScope.$broadcast(Defines.ShowProfileSettingsBox);
+  }
+
 }
 
 angular.module('myApp.components').component('mainBox', {
   templateUrl: '/assets/partials/main-box.html',
   controller: MainBoxController,
   controllerAs: 'ctrl',
-  bindings: {
-    minimizeMainBox: '<',
-    showCreateRoomBox: '<',
-    showProfileSettingsBox: '<',
-  },
 });

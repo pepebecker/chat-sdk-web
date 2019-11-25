@@ -17,12 +17,12 @@ import { IProfileBox } from '../services/profile-box.service';
 
 class OnlineUsersListController extends AbstractUsersListController {
 
-  static $inject = ['$scope', '$timeout', 'OnlineConnector', 'Search', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'ProfileBox'];
+  static $inject = ['$rootScope', '$timeout', 'OnlineConnector', 'Search', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'ProfileBox'];
 
   allUsers = Array<IUser>();
 
   constructor(
-    protected $scope: ng.IScope,
+    protected $rootScope: ng.IRootScopeService,
     protected $timeout: ng.ITimeoutService,
     protected OnlineConnector: IOnlineConnector,
     protected Search: ISearch,
@@ -33,14 +33,14 @@ class OnlineUsersListController extends AbstractUsersListController {
     protected RoomOpenQueue: IRoomOpenQueue,
     protected ProfileBox: IProfileBox,
   ) {
-    super($scope, Cache, UserStore, RoomStore, RoomCreator, RoomOpenQueue, ProfileBox);
+    super($rootScope, Cache, UserStore, RoomStore, RoomCreator, RoomOpenQueue, ProfileBox);
 
-    $scope.$on(N.OnlineUserAdded, () => {
+    $rootScope.$on(N.OnlineUserAdded, () => {
       Log.notification(N.OnlineUserAdded, 'OnlineUsersListController');
       this.updateList();
     });
 
-    $scope.$on(N.OnlineUserRemoved, () => {
+    $rootScope.$on(N.OnlineUserRemoved, () => {
       Log.notification(N.OnlineUserRemoved, 'OnlineUsersListController');
       this.updateList();
     });
@@ -56,7 +56,7 @@ class OnlineUsersListController extends AbstractUsersListController {
     });
 
     this.$timeout(() => {
-      this.$scope.$digest();
+      this.$rootScope.$digest();
     });
   }
 

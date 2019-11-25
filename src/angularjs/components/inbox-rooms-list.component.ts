@@ -10,36 +10,36 @@ import { InboxTab } from '../keys/tab-keys';
 
 class InboxRoomsListController {
 
-  static $inject = ['$scope', '$timeout', 'RoomStore', 'Search'];
+  static $inject = ['$rootScope', '$timeout', 'RoomStore', 'Search'];
 
   rooms = Array<IRoom>();
 
   constructor(
-    private $scope: ng.IScope,
+    private $rootScope: ng.IRootScopeService,
     private $timeout: ng.ITimeoutService,
     private RoomStore: IRoomStore,
     private Search: ISearch,
   ) {
-    $scope.$on(N.RoomAdded, () => {
+    $rootScope.$on(N.RoomAdded, () => {
       Log.notification(N.RoomAdded, 'InboxRoomsListController');
       this.updateList();
     });
 
-    $scope.$on(N.RoomRemoved, () => {
+    $rootScope.$on(N.RoomRemoved, () => {
       Log.notification(N.RoomRemoved, 'InboxRoomsListController');
       this.updateList();
     });
 
-    $scope.$on(N.LoginComplete, () => {
+    $rootScope.$on(N.LoginComplete, () => {
       Log.notification(N.LoginComplete, 'InboxRoomsListController');
       RoomStore.loadPrivateRoomsToMemory();
       this.updateList();
     });
 
     // Update the list if the user count on a room changes
-    $scope.$on(N.RoomUpdated, this.updateList.bind(this));
+    $rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
 
-    $scope.$on(N.Logout, this.updateList.bind(this));
+    $rootScope.$on(N.Logout, this.updateList.bind(this));
 
     Search.queryForTabObservable(InboxTab).subscribe(query => {
       this.updateList();
@@ -54,7 +54,7 @@ class InboxRoomsListController {
     });
 
     this.$timeout(() => {
-      this.$scope.$digest();
+      this.$rootScope.$digest();
     });
   }
 

@@ -12,13 +12,13 @@ import { IProfileBox } from '../services/profile-box.service';
 
 export class AbstractUsersListController {
 
-  static $inject = ['$scope', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'ProfileBox'];
+  static $inject = ['$rootScope', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'ProfileBox'];
 
   room: IRoom;
   users = Array<IUser>();
 
   constructor(
-    protected $scope: ng.IScope,
+    protected $rootScope: ng.IRootScopeService,
     protected Cache: ICache,
     protected UserStore: IUserStore,
     protected RoomStore: IRoomStore,
@@ -30,25 +30,25 @@ export class AbstractUsersListController {
       throw new Error('AbstractUsersListController can\'t be instantiated.');
     }
 
-    $scope.$on(N.UserBlocked, () => {
+    $rootScope.$on(N.UserBlocked, () => {
       Log.notification(N.UserBlocked, 'AbstractUsersListController');
       this.updateList();
     });
 
-    $scope.$on(N.UserUnblocked, () => {
+    $rootScope.$on(N.UserUnblocked, () => {
       Log.notification(N.UserUnblocked, 'AbstractUsersListController');
       this.updateList();
     });
 
     // TODO: A bit hacky
-    $scope.$on(N.RoomUpdated, (event, room) => {
+    $rootScope.$on(N.RoomUpdated, (event, room) => {
       Log.notification(N.RoomUpdated, 'AbstractUsersListController');
       if (room === this.room) {
         this.updateList();
       }
     });
 
-    $scope.$on(N.Logout, this.updateList.bind(this));
+    $rootScope.$on(N.Logout, this.updateList.bind(this));
   }
 
   updateList() {

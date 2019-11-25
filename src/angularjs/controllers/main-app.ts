@@ -215,6 +215,11 @@ class MainAppController implements IMainAppController {
       });
     });
 
+    // Minimize main box
+    $rootScope.$on(Defines.MinimizeMainBox, () => {
+      this.minimizeMainBox();
+    });
+
     // Show boxes
 
     $rootScope.$on(Defines.ShowLoginBox, (_, mode: LoginMode) => {
@@ -363,7 +368,6 @@ class MainAppController implements IMainAppController {
    */
   showCreateRoomBox() {
     this.$scope.activeBox = Defines.CreateRoomBox;
-    this.$scope.$broadcast(Defines.ShowCreateChatBox);
   }
 
   toggleMainBoxVisibility() {

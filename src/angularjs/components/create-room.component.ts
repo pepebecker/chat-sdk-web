@@ -1,6 +1,6 @@
 import * as angular from 'angular';
 
-import { ShowCreateChatBox } from '../keys/defines';
+import { ShowCreateRoomBox, ShowMainBox } from '../keys/defines';
 import { RoomType } from '../keys/room-type';
 import { IConfig } from '../services/config';
 import { IRoomCreator } from '../services/room-creator';
@@ -15,18 +15,15 @@ export interface ICreateRoomOptions {
 
 class CreateRoomController {
 
-  static $inject = ['$scope', 'Config', 'RoomCreator', 'RoomOpenQueue'];
+  static $inject = ['$rootScope', 'Config', 'RoomCreator', 'RoomOpenQueue'];
 
   config: IConfig;
   focusName: boolean;
   public: boolean;
   roomOptions: ICreateRoomOptions;
 
-  // Bindings
-  showMainBox: () => void;
-
   constructor(
-    private $scope: ng.IScope,
+    private $rootScope: ng.IRootScopeService,
     private Config: IConfig,
     private RoomCreator: IRoomCreator,
     private RoomOpenQueue: IRoomOpenQueue,
@@ -35,8 +32,8 @@ class CreateRoomController {
 
     this.clearForm();
 
-    this.$scope.$on(ShowCreateChatBox, () => {
-      Log.notification(ShowCreateChatBox, 'CreateRoomController');
+    this.$rootScope.$on(ShowCreateRoomBox, () => {
+      Log.notification(ShowCreateRoomBox, 'CreateRoomController');
       this.focusName = true;
     });
   }
@@ -77,7 +74,7 @@ class CreateRoomController {
 
   back() {
     this.clearForm();
-    this.showMainBox();
+    this.$rootScope.$broadcast(ShowMainBox);
   }
 
   clearForm() {
@@ -94,7 +91,4 @@ angular.module('myApp.components').component('createRoomBox', {
   templateUrl: '/assets/partials/create-room-box.html',
   controller: CreateRoomController,
   controllerAs: 'ctrl',
-  bindings: {
-    showMainBox: '<'
-  }
 });

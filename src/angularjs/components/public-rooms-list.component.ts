@@ -10,17 +10,17 @@ import { RoomsTab } from '../keys/tab-keys';
 
 class PublicRoomsListController {
 
-  static $inject = ['$scope', '$timeout', 'Search'];
+  static $inject = ['$rootScope', '$timeout', 'Search'];
 
   allRooms = Array<IRoom>();
   rooms = Array<IRoom>();
 
   constructor(
-    private $scope: ng.IScope,
+    private $rootScope: ng.IScope,
     private $timeout: ng.ITimeoutService,
     private Search: ISearch,
   ) {
-    $scope.$on(N.PublicRoomAdded, (event, room) => {
+    this.$rootScope.$on(N.PublicRoomAdded, (event, room) => {
       Log.notification(N.PublicRoomAdded, 'PublicRoomsListController');
       // Add the room and sort the list
       if (!ArrayUtils.contains(this.allRooms, room)) {
@@ -30,7 +30,7 @@ class PublicRoomsListController {
 
     });
 
-    $scope.$on(N.PublicRoomRemoved, (event, room) => {
+    this.$rootScope.$on(N.PublicRoomRemoved, (event, room) => {
       Log.notification(N.PublicRoomRemoved, 'PublicRoomsListController');
 
       ArrayUtils.remove(this.allRooms, room);
@@ -38,11 +38,11 @@ class PublicRoomsListController {
     });
 
     // Update the list if the user count on a room changes
-    $scope.$on(N.RoomUpdated, this.updateList.bind(this));
+    this.$rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
 
-    $scope.$on(N.Logout, this.updateList.bind(this));
+    this.$rootScope.$on(N.Logout, this.updateList.bind(this));
 
-    Search.queryForTabObservable(RoomsTab).subscribe(query => {
+    this.Search.queryForTabObservable(RoomsTab).subscribe(query => {
       this.updateList();
     });
   }
@@ -87,7 +87,7 @@ class PublicRoomsListController {
     });
 
     this.$timeout(() => {
-      this.$scope.$digest();
+      this.$rootScope.$digest();
     });
   }
 

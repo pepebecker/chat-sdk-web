@@ -13,7 +13,7 @@ import { IEnvironment } from '../services/environment';
 
 class RoomListBoxController {
 
-  static $inject = ['$scope', '$rootScope', '$timeout', 'Auth', 'Cache', 'Environment', 'LocalStorage', 'RoomPositionManager'];
+  static $inject = ['$rootScope', '$timeout', 'Auth', 'Cache', 'Environment', 'LocalStorage', 'RoomPositionManager'];
 
   rooms = Array<IRoom>();
   boxHeight = Dimensions.RoomListBoxHeight;
@@ -26,7 +26,6 @@ class RoomListBoxController {
   img_30_minimize: string;
 
   constructor(
-    private $scope: ng.IScope,
     private $rootScope: IRootScope,
     private $timeout: ng.ITimeoutService,
     private Auth: IAuth,
@@ -42,9 +41,9 @@ class RoomListBoxController {
     this.setMoreBoxMinimized(LocalStorage.getProperty(LocalStorage.moreMinimizedKey));
 
     // Update the list when a room changes
-    $scope.$on(N.UpdateRoomActiveStatus, this.updateList.bind(this));
-    $scope.$on(N.RoomUpdated, this.updateList.bind(this));
-    $scope.$on(N.Logout, this.updateList.bind(this));
+    $rootScope.$on(N.UpdateRoomActiveStatus, this.updateList.bind(this));
+    $rootScope.$on(N.RoomUpdated, this.updateList.bind(this));
+    $rootScope.$on(N.Logout, this.updateList.bind(this));
   }
 
   updateList() {
@@ -71,7 +70,7 @@ class RoomListBoxController {
     this.moreChatsMinimized = this.rooms.length === 0;
 
     this.$timeout(() => {
-      this.$scope.$digest();
+      this.$rootScope.$digest();
     });
   }
 
