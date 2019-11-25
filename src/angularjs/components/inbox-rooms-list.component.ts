@@ -10,13 +10,12 @@ import { InboxTab } from '../keys/tab-keys';
 
 class InboxRoomsListController {
 
-  static $inject = ['$rootScope', '$timeout', 'RoomStore', 'Search'];
+  static $inject = ['$rootScope', 'RoomStore', 'Search'];
 
   rooms = Array<IRoom>();
 
   constructor(
     private $rootScope: ng.IRootScopeService,
-    private $timeout: ng.ITimeoutService,
     private RoomStore: IRoomStore,
     private Search: ISearch,
   ) {
@@ -51,10 +50,6 @@ class InboxRoomsListController {
 
     this.rooms = ArrayUtils.filterByKey(privateRooms, this.Search.getQueryForActiveTab(), (room) => {
       return room.name;
-    });
-
-    this.$timeout(() => {
-      this.$rootScope.$digest();
     });
   }
 

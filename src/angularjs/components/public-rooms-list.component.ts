@@ -10,14 +10,13 @@ import { RoomsTab } from '../keys/tab-keys';
 
 class PublicRoomsListController {
 
-  static $inject = ['$rootScope', '$timeout', 'Search'];
+  static $inject = ['$rootScope', 'Search'];
 
   allRooms = Array<IRoom>();
   rooms = Array<IRoom>();
 
   constructor(
     private $rootScope: ng.IScope,
-    private $timeout: ng.ITimeoutService,
     private Search: ISearch,
   ) {
     this.$rootScope.$on(N.PublicRoomAdded, (event, room) => {
@@ -84,10 +83,6 @@ class PublicRoomsListController {
 
     this.rooms = ArrayUtils.filterByKey(this.allRooms, this.Search.getQueryForActiveTab(), (room) => {
       return room.name;
-    });
-
-    this.$timeout(() => {
-      this.$rootScope.$digest();
     });
   }
 

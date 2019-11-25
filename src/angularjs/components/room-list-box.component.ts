@@ -12,7 +12,7 @@ import { IEnvironment } from '../services/environment';
 
 class RoomListBoxController {
 
-  static $inject = ['$rootScope', '$timeout', 'Cache', 'Environment', 'LocalStorage', 'RoomPositionManager'];
+  static $inject = ['$rootScope', 'Cache', 'Environment', 'LocalStorage', 'RoomPositionManager'];
 
   rooms = Array<IRoom>();
   boxHeight = Dimensions.RoomListBoxHeight;
@@ -26,7 +26,6 @@ class RoomListBoxController {
 
   constructor(
     private $rootScope: IRootScope,
-    private $timeout: ng.ITimeoutService,
     private Cache: ICache,
     private Environment: IEnvironment,
     private LocalStorage: ILocalStorage,
@@ -66,10 +65,6 @@ class RoomListBoxController {
     });
 
     this.moreChatsMinimized = this.rooms.length === 0;
-
-    this.$timeout(() => {
-      this.$rootScope.$digest();
-    });
   }
 
   roomClicked(room: IRoom) {

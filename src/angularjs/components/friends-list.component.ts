@@ -18,13 +18,12 @@ import { IProfileBox } from '../services/profile-box.service';
 
 export class FriendsListController extends AbstractUsersListController {
 
-  static $inject = ['$rootScope', '$timeout', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'OnlineConnector', 'FriendsConnector', 'Search', 'ProfileBox'];
+  static $inject = ['$rootScope', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'OnlineConnector', 'FriendsConnector', 'Search', 'ProfileBox'];
 
   allUsers = Array<IUser>();
 
   constructor(
     protected $rootScope: ng.IRootScopeService,
-    protected $timeout: ng.ITimeoutService,
     protected Cache: ICache,
     protected UserStore: IUserStore,
     protected RoomStore: IRoomStore,
@@ -79,10 +78,6 @@ export class FriendsListController extends AbstractUsersListController {
         }
         return 0;
       }
-    });
-
-    this.$timeout(() => {
-      this.$rootScope.$digest();
     });
   }
 

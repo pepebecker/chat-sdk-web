@@ -17,13 +17,12 @@ import { IProfileBox } from '../services/profile-box.service';
 
 class OnlineUsersListController extends AbstractUsersListController {
 
-  static $inject = ['$rootScope', '$timeout', 'OnlineConnector', 'Search', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'ProfileBox'];
+  static $inject = ['$rootScope', 'OnlineConnector', 'Search', 'Cache', 'UserStore', 'RoomStore', 'RoomCreator', 'RoomOpenQueue', 'ProfileBox'];
 
   allUsers = Array<IUser>();
 
   constructor(
     protected $rootScope: ng.IRootScopeService,
-    protected $timeout: ng.ITimeoutService,
     protected OnlineConnector: IOnlineConnector,
     protected Search: ISearch,
     protected Cache: ICache,
@@ -53,10 +52,6 @@ class OnlineUsersListController extends AbstractUsersListController {
     this.allUsers = ArrayUtils.objectToArray(this.OnlineConnector.onlineUsers);
     this.users = ArrayUtils.filterByKey(this.allUsers, this.Search.getQueryForActiveTab(), (user) => {
       return user.getName();
-    });
-
-    this.$timeout(() => {
-      this.$rootScope.$digest();
     });
   }
 

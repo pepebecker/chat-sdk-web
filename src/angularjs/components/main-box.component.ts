@@ -24,7 +24,7 @@ export interface IMainBoxScope extends ng.IScope {
 
 class MainBoxController {
 
-  static $inject = ['$rootScope', '$scope', '$timeout', 'FriendsConnector', 'Config', 'Screen', 'RoomStore', 'UserStore', 'Search', 'TabService', 'Environment'];
+  static $inject = ['$rootScope', '$scope', 'FriendsConnector', 'Config', 'Screen', 'RoomStore', 'UserStore', 'Search', 'TabService', 'Environment'];
 
   mainBoxHeight = Dimensions.MainBoxHeight;
   mainBoxWidth = Dimensions.MainBoxWidth;
@@ -44,7 +44,6 @@ class MainBoxController {
   constructor(
     private $rootScope: ng.IRootScopeService,
     private $scope: IMainBoxScope,
-    private $timeout: ng.ITimeoutService,
     private FriendsConnector: IFriendsConnector,
     private Config: IConfig,
     private Screen: IScreen,
@@ -79,9 +78,6 @@ class MainBoxController {
     // When the user value changes update the user interface
     this.$rootScope.$on(N.UserValueChanged, () => {
       Log.notification(N.UserValueChanged, 'MainBoxController');
-      this.$timeout(() => {
-        this.$rootScope.$digest();
-      });
     });
 
     this.updateMainBoxSize();
